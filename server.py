@@ -1,7 +1,11 @@
-from aiohttp import web
 import json
+from aiohttp import web
 from pydantic import BaseModel, ValidationError
+from environs import Env
 
+
+env = Env()
+env.read_env()
 
 class BookModel(BaseModel):
     id: int
@@ -85,7 +89,7 @@ async def create_app():
             web.get("/books/", get_books),
             web.get("/books/{id}/", get_book),
             web.post("/add_book/", add_book),
-            web.post("/update_book/", update_book),
+            web.patch("/update_book/", update_book),
             web.delete("/delete_book/{id}/", delete_book),
         ]
     )
@@ -93,4 +97,4 @@ async def create_app():
 
 
 if __name__ == "__main__":
-    web.run_app(create_app(), host="127.0.0.1", port=8080)
+    web.run_app(create_app(), host=env("HOST"), port=int(env("PORT")))
